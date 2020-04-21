@@ -77,16 +77,61 @@ public class DefaultDependencyScope : IDependencyScope
 }
 ```
 
-Il suffira donc de builder notre ServiceProvider et d'utiliser ce resolver.
-Pour WebApi :  
+Il suffira donc de builder notre ServiceProvider et d'utiliser ce resolver au démarrage de l'application.
+Il faudra également penser à enregistrer les controllers dans les services.
+Dans la méthode statique `WebApiConfig.Register(HttpConfiguration config)`, il suffit d'appeler la méthode `Configure` défini ci dessous.  
 
 ```c#
-GlobalConfiguration.Configuration.DependencyResolver = new DefaultDependencyResolver(serviceProvider);
+public static class DependencyInjectionBootStrapper
+{
+    public static void Configure(HttpConfiguration config)
+    {
+        var startup = new Startup();
+        var services = new ServiceCollection();
+        services.AddApiControllers();
+        startup.ConfigureServices(services);
+
+        config.DependencyResolver = new DefaultDependencyResolver(services.BuildServiceProvider());
+    }
+
+    private static void AddApiControllers(this IServiceCollection services)
+    {
+        foreach (var controllerType in typeof(DependencyInjectionBootStrapper).Assembly.GetExportedTypes()
+            .Where(t => !t.IsAbstract && !t.IsGenericTypeDefinition)
+            .Where(t => typeof(IHttpController).IsAssignableFrom(t)
+                 && t.Name.EndsWith("Controller", StringComparison.Ordinal)))
+        {
+            services.AddScoped(controllerType);
+        }
+    }
+}
 ```
 
 Pour MVC :
 ```c#
-DependencyResolver.SetResolver(new DefaultDependencyResolver(serviceProvider));
+public static class DependencyInjectionBootStrapper
+{
+    public static void Configure()
+    {
+        var startup = new Startup();
+        var services = new ServiceCollection();
+        services.AddApiControllers();
+        startup.ConfigureServices(services);
+
+        DependencyResolver.SetResolver(new DefaultDependencyResolver(services.BuildServiceProvider()));
+    }
+
+    private static void AddApiControllers(this IServiceCollection services)
+    {
+        foreach (var controllerType in typeof(DependencyInjectionBootStrapper).Assembly.GetExportedTypes()
+            .Where(t => !t.IsAbstract && !t.IsGenericTypeDefinition)
+            .Where(t => typeof(IController).IsAssignableFrom(t)
+                 && t.Name.EndsWith("Controller", StringComparison.Ordinal)))
+        {
+            services.AddScoped(controllerType);
+        }
+    }
+}
 ```
 
 ### Stratégie de migration

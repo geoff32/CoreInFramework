@@ -7,6 +7,7 @@ namespace WebApi
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
+            DependencyInjectionBootStrapper.Configure(config);
 
             // Remove XML Formatter - Use only Json
             config.Formatters.Remove(config.Formatters.XmlFormatter);

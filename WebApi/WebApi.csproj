@@ -119,21 +119,6 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="Unity.Abstractions, Version=5.11.5.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.Abstractions.5.11.5\lib\net47\Unity.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.AspNet.WebApi, Version=5.11.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.AspNet.WebApi.5.11.1\lib\net47\Unity.AspNet.WebApi.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Container, Version=5.11.6.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.Container.5.11.6\lib\net47\Unity.Container.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Microsoft.DependencyInjection, Version=5.11.5.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.Microsoft.DependencyInjection.5.11.5\lib\netstandard2.0\Unity.Microsoft.DependencyInjection.dll</HintPath>
-    </Reference>
-    <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
-      <HintPath>..\packages\WebActivatorEx.2.2.0\lib\net40\WebActivatorEx.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
@@ -157,8 +142,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\UnityConfig.cs" />
-    <Compile Include="App_Start\UnityWebApiActivator.cs" />
+    <Compile Include="App_Start\DependencyInjectionBootStrapper.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="DependencyInjection\DefaultDependencyScope.cs" />
     <Compile Include="Global.asax.cs">

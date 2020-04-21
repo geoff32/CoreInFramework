@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using WebApi.Services.Products.DependencyInjection;
 
 namespace WebApi
 {
@@ -6,6 +7,7 @@ namespace WebApi
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddProducts();
         }
     }
 }

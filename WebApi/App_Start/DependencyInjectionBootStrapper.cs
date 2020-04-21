@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Web.Http;
@@ -11,8 +12,12 @@ namespace WebApi
     {
         public static void Configure(HttpConfiguration config)
         {
-            var startup = new Startup();
+            var configurationBuilder = new ConfigurationBuilder();
+            configurationBuilder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            var startup = new Startup(configurationBuilder.Build());
             var services = new ServiceCollection();
+
             services.AddOptions();
             services.AddApiControllers();
             startup.ConfigureServices(services);

@@ -1,6 +1,7 @@
+using Microsoft.Extensions.DependencyInjection;
 using System.Web.Http;
-
-using Unity.AspNet.WebApi;
+using Unity.Microsoft.DependencyInjection;
+using WebApi.DependencyInjection;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(WebApi.UnityWebApiActivator), nameof(WebApi.UnityWebApiActivator.Start))]
 [assembly: WebActivatorEx.ApplicationShutdownMethod(typeof(WebApi.UnityWebApiActivator), nameof(WebApi.UnityWebApiActivator.Shutdown))]
@@ -17,10 +18,10 @@ namespace WebApi
         /// </summary>
         public static void Start() 
         {
-            // Use UnityHierarchicalDependencyResolver if you want to use
-            // a new child container for each IHttpController resolution.
-            // var resolver = new UnityHierarchicalDependencyResolver(UnityConfig.Container);
-            var resolver = new UnityDependencyResolver(UnityConfig.Container);
+            var startup = new Startup();
+            var services = new ServiceCollection();
+            startup.ConfigureServices(services);
+            var resolver = new DefaultDependencyResolver(UnityConfig.Container.BuildServiceProvider(services));
 
             GlobalConfiguration.Configuration.DependencyResolver = resolver;
         }

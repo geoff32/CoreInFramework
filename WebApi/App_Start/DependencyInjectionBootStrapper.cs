@@ -13,6 +13,7 @@ namespace WebApi
         {
             var startup = new Startup();
             var services = new ServiceCollection();
+            services.AddOptions();
             services.AddApiControllers();
             startup.ConfigureServices(services);
 

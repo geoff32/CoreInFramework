@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using WebApi.Services.Products.Abstractions;
 using WebApi.Services.Products.Models;
+using WebApi.Services.Products.Options;
 
 namespace WebApi.Services.Products
 {
@@ -10,8 +12,8 @@ namespace WebApi.Services.Products
     {
         private readonly Dictionary<Guid, Product> _products;
 
-        public ProductService()
-            => _products = Enumerable.Range(1, 10)
+        public ProductService(IOptions<ProductOptions> options)
+            => _products = Enumerable.Range(1, options.Value.NbProducts)
                 .Select(i => new Product($"Product {i}"))
                 .ToDictionary(p => p.Id);
 

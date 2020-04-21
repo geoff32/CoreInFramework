@@ -1,6 +1,6 @@
 # Net Core dans Net Framework
 
-## IoC
+## Injection de dépendances
 
 ### IServiceCollection dans .Net Framework
 
@@ -157,3 +157,35 @@ public static void Start()
 }
 ```
 
+## Configuration  
+
+Ajouter le package `Microsoft.Extensions.Options` dans l'application et la couche de services.
+Ajouter le code suivant dans le Bootstrapper.  
+
+```c#
+services.AddOptions();
+```
+
+Nous allons maintenant définir une option dans la couche de services qui va nous permettre de déterminer le nombre de produits à afficher.
+
+```c#
+public class ProductOptions
+{
+    public int NbProducts { get; set; }
+}
+```
+
+Puis injecter cette valeur dans le constructeur de `ProductService`.  
+
+```c#
+public ProductService(IOptions<ProductOptions> options)
+    => _products = Enumerable.Range(1, options.Value.NbProducts)
+        .Select(i => new Product($"Product {i}"))
+        .ToDictionary(p => p.Id);
+```
+
+Et enfin configurer cette options dans la méthode `Startup.ConfigureServices(IServiceCollection services)`  
+
+```c#
+services.Configure<ProductOptions>(o => o.NbProducts = 5);
+```

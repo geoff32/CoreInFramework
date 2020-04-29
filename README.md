@@ -1,6 +1,6 @@
 # Net Core dans Net Framework
 
-## IoC
+## Injection de dépendances
 
 ### IServiceCollection dans .Net Framework
 
@@ -157,3 +157,74 @@ public static void Start()
 }
 ```
 
+## Configuration  
+
+Ajouter le package `Microsoft.Extensions.Options` dans l'application et la couche de services.
+Ajouter le code suivant dans le Bootstrapper.  
+
+```c#
+services.AddOptions();
+```
+
+Nous allons maintenant définir une option dans la couche de services qui va nous permettre de déterminer le nombre de produits à afficher.
+
+```c#
+public class ProductOptions
+{
+    public int NbProducts { get; set; }
+}
+```
+
+Puis injecter cette valeur dans le constructeur de `ProductService`.  
+
+```c#
+public ProductService(IOptions<ProductOptions> options)
+    => _products = Enumerable.Range(1, options.Value.NbProducts)
+        .Select(i => new Product($"Product {i}"))
+        .ToDictionary(p => p.Id);
+```
+
+Et enfin configurer cette options dans la méthode `Startup.ConfigureServices(IServiceCollection services)`  
+
+```c#
+services.Configure<ProductOptions>(o => o.NbProducts = 5);
+```
+
+### Chargement de fichier de configuration  
+
+Ajouter un fichier appsettings.json à la racine de l'application. Penser à mettre la propriété "Copy to output directory" à "Copy always"
+
+```json
+{
+  "Products": {
+    "NbProducts": 20
+  }
+}
+```
+
+Ajouter les packages `Microsoft.Extensions.Configuration.Json` et `Microsoft.Extensions.Options.ConfigurationExtensions` dans l'application.
+Ajouter un constructeur à notre classe `Startup`.  
+
+```c#
+public Startup(IConfiguration configuration)
+{
+    Configuration = configuration;
+}
+
+public IConfiguration Configuration { get; }
+```
+
+Et modifier la méthode `ConfigureService` pour prendre en compte la configuration à la place du settings
+
+```c#
+services.Configure<ProductOptions>(Configuration.GetSection("Products"));
+```
+
+Enfin dans le bootstrapper ajouter le code suivant pour instancier la classe `Startup`. 
+
+```c#
+var configurationBuilder = new ConfigurationBuilder();
+configurationBuilder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+var startup = new Startup(configurationBuilder.Build());
+```
